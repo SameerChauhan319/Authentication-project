@@ -1,0 +1,72 @@
+Task 01: Secure User Authentication - Project Details
+
+==================================================
+1. TECHNOLOGIES USED
+==================================================
+- Backend Framework: Node.js with Express.js (Provides a fast, robust server environment).
+- Database: SQLite3 (A lightweight, file-based database perfect for local development without needing a separate database server).
+- Security (Hashing): bcrypt (Used to securely hash user passwords before storing them in the database, protecting against data breaches).
+- Security (Sessions): jsonwebtoken (JWT) (Used to generate secure, stateless session tokens for logged-in users).
+- Frontend: Vanilla HTML, CSS, and JavaScript (Provides a fast, dependency-free user interface).
+
+==================================================
+2. PROJECT WORKFLOW
+==================================================
+The application follows a standard secure authentication flow:
+
+A. Registration (Sign Up)
+1. The user fills out the registration form (Username, Email, Password).
+2. The frontend sends a POST request to '/api/register'.
+3. The server receives the password and uses 'bcrypt' to hash it.
+4. The server saves the Username, Email, and the HASHED Password in the SQLite database. (We never store plain-text passwords!).
+
+B. Login (Sign In)
+1. The user fills out the login form.
+2. The frontend sends a POST request to '/api/login'.
+3. The server retrieves the user record from the database using the username.
+4. The server uses 'bcrypt' to compare the plain-text password from the form with the hashed password in the database.
+5. If they match, the server generates a JSON Web Token (JWT) using a secret key. This token contains the user's ID and role.
+6. The server sends the JWT back to the client. The frontend saves it in 'localStorage'.
+
+C. Accessing Protected Routes (Dashboard)
+1. Once logged in, the frontend sends a GET request to '/api/me' to get user details.
+2. It attaches the JWT to the request headers: `Authorization: Bearer <token>`.
+3. The server's middleware (`authenticateToken`) intercepts the request, verifies the token's validity using the secret key, and grants access if valid.
+4. If the user clicks "Verify Admin Route", a request is sent to '/api/admin'. The server checks the token and also verifies that the user's role is specifically 'admin'.
+
+==================================================
+3. DETAILED EXPLANATION OF FILES
+==================================================
+
+- server.js (The Backend)
+  This is the core of your application. It initializes the Express server and connects to the 'database.sqlite' file. 
+  It defines three main things:
+  1. Middleware: `express.json()` to parse incoming data, and `express.static()` to serve your frontend files from the /public folder.
+  2. The Database Connection: It automatically creates a 'users' table if it doesn't exist.
+  3. API Routes: 
+     - `/api/register`: Handles new account creation.
+     - `/api/login`: Handles credential verification and JWT generation.
+     - `/api/me` & `/api/admin`: Protected routes that use the `authenticateToken` function to ensure only valid users get through.
+
+- public/index.html (The Structure)
+  Contains the structure of your user interface. It has two main sections wrapped in `<section>` tags:
+  1. `#auth-view`: Holds the login and registration forms.
+  2. `#dashboard-view`: Holds the protected content that is only shown after logging in.
+
+- public/style.css (The Aesthetics)
+  Contains all the styling. We built a sleek, dark-mode minimalist interface using CSS variables (`:root`). It ensures the application is responsive and looks premium.
+
+- public/app.js (The Frontend Logic)
+  This JavaScript file handles all user interactions without refreshing the page (Single Page Application feel).
+  
+  ## Frontend Workflow
+  The application is a Vanilla JavaScript Single Page Application (SPA).
+  1. **Forms**: Users can toggle between the "Login" and "Register" forms.
+  2. **Security UX**: The registration form features a real-time **Password Strength Meter** and both forms include a **Show/Hide Password** toggle for enhanced user experience.
+  3. **Authentication**: Upon successful login, the server returns a JWT which the frontend stores in `localStorage`.
+  4. **State**: The `app.js` checks `localStorage` on load; if a token exists, it fetches user details via `/api/me`.
+  5. **Dashboard**: The dashboard is dynamically rendered based on the user's role. If the user is an `admin`, a special administrative panel is unhidden, allowing them to test the protected `/api/admin` route.
+  
+  - It listens for form submissions, prevents default browser refreshes, and uses the `fetch()` API to send data to your backend (`server.js`).
+  - It stores the received JWT in `localStorage` and automatically fetches the user's dashboard data if a valid token is present.
+  - It handles logging out by simply removing the token from `localStorage` and showing the login screen again.

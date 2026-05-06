@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Authentication Section -->
+        <section id="auth-view" class="view active-view">
+            <div class="auth-card">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>SecurePortal</span>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" id="btn-login">Sign In</button>
+                    <button class="tab-btn" id="btn-register">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active-form">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" required placeholder="Enter your username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="password-input-wrapper" style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="login-password" required placeholder="Enter your password" style="width: 100%; padding-right: 40px;">
+                            <button type="button" class="icon-btn toggle-password" data-target="login-password" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="error-msg" id="login-error"></div>
+
+                    <button type="submit" class="btn btn-primary">Sign In to Account</button>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="reg-username">Username</label>
+                        <input type="text" id="reg-username" required placeholder="Choose a username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <div class="password-input-wrapper" style="position: relative; display: flex; align-items: center; margin-bottom: 8px;">
+                            <input type="password" id="reg-password" required placeholder="Create a password" style="width: 100%; padding-right: 40px;">
+                            <button type="button" class="icon-btn toggle-password" data-target="reg-password" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                        <div class="password-strength" style="height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 4px;">
+                            <div id="strength-bar" style="height: 100%; width: 0%; transition: all 0.3s;"></div>
+                        </div>
+                        <div id="strength-text" style="font-size: 11px; color: var(--text-muted); text-align: right; min-height: 14px;"></div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="reg-admin">
+                        <label for="reg-admin">Register as Administrator</label>
+                    </div>
+
+                    <div class="error-msg" id="register-error"></div>
+                    <div class="success-msg" id="register-success"></div>
+
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-view" class="view">
+            <div class="dashboard-layout">
+                <header class="dashboard-header">
+                    <h2>Dashboard</h2>
+                    <button id="btn-logout" class="btn btn-secondary">Sign Out</button>
+                </header>
+                
+                <div class="dashboard-content">
+                    <div class="panel highlight-panel">
+                        <h3 id="welcome-message">Welcome!</h3>
+                        <p>You have successfully authenticated.</p>
+                    </div>
+
+                    <div class="panel">
+                        <h4>Account Information</h4>
+                        <ul class="info-list">
+                            <li>
+                                <span class="label">Username</span>
+                                <strong id="dash-username"></strong>
+                            </li>
+                            <li>
+                                <span class="label">Role</span>
+                                <span class="badge" id="dash-role"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="admin-panel" class="panel admin-panel hidden">
+                        <h4>Administrator Access</h4>
+                        <p>You have special privileges to view this section.</p>
+                        <button id="btn-fetch-admin" class="btn btn-primary">Verify Admin Route</button>
+                        <div id="admin-data-response" class="response-box"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
