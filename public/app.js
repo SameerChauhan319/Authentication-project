@@ -21,6 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnFetchAdmin = document.getElementById('btn-fetch-admin');
     const adminDataResponse = document.getElementById('admin-data-response');
 
+    // API Configuration
+    // If we're on port 5500 (Live Server), point to the backend on port 3000
+    const API_BASE_URL = window.location.port === '5500' ? 'http://localhost:3000' : '';
+
     // State
     let token = localStorage.getItem('token');
 
@@ -67,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Signing In...';
 
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch(`${API_BASE_URL}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -83,7 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginError.textContent = data.error || 'Login failed.';
             }
         } catch (err) {
-            loginError.textContent = 'Server error. Please try again.';
+            console.error('Login error:', err);
+            loginError.textContent = 'Connection error. Is the backend server running on port 3000?';
         } finally {
             btn.textContent = 'Sign In';
         }
@@ -103,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Creating Account...';
 
         try {
-            const res = await fetch('/api/register', {
+            const res = await fetch(`${API_BASE_URL}/api/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password, role })
@@ -119,7 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 registerError.textContent = data.error || 'Registration failed.';
             }
         } catch (err) {
-            registerError.textContent = 'Server error. Please try again.';
+            console.error('Registration error:', err);
+            registerError.textContent = 'Connection error. Is the backend server running on port 3000?';
         } finally {
             btn.textContent = 'Sign Up';
         }
@@ -138,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!token) return showAuthView();
 
         try {
-            const res = await fetch('/api/me', {
+            const res = await fetch(`${API_BASE_URL}/api/me`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -159,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnFetchAdmin.addEventListener('click', async () => {
         adminDataResponse.textContent = 'Fetching...';
         try {
-            const res = await fetch('/api/admin', {
+            const res = await fetch(`${API_BASE_URL}/api/admin`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();

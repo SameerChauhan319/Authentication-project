@@ -20,6 +20,17 @@ const SECRET_KEY = 'your_super_secret_key_change_me_in_production';
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Manual CORS Middleware
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).json({});
+    }
+    next();
+});
+
 // Database Setup
 const db = new sqlite3.Database(path.join(__dirname, 'database.sqlite'), (err) => {
     if (err) {
@@ -57,8 +68,10 @@ const authenticateToken = (req, res, next) => {
 // 1. Register User
 app.post('/api/register', async (req, res) => {
     const { username, email, password, role } = req.body;
+    console.log(`[AUTH] Registration attempt for: ${username} (${email})`);
 
     if (!username || !email || !password) {
+        console.warn('[AUTH] Registration failed: Missing fields');
         return res.status(400).json({ error: 'Username, email, and password are required.' });
     }
 
@@ -84,8 +97,10 @@ app.post('/api/register', async (req, res) => {
 // 2. Login User
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
+    console.log(`[AUTH] Login attempt for: ${username}`);
 
     if (!username || !password) {
+        console.warn('[AUTH] Login failed: Missing fields');
         return res.status(400).json({ error: 'Username and password are required.' });
     }
 
